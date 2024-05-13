@@ -1,83 +1,167 @@
 ## Laboratory work II
+
+Данная лабораторная работа посвещена изучению систем контроля версий на примере **Git**.
+
+```bash
+$ open https://git-scm.com
+```
+
+## Tasks
+
+- [ ] 1. Создать публичный репозиторий с названием **lab02** и с лиценцией **MIT**
+- [ ] 2. Сгенирировать токен для доступа к сервису **GitHub** с правами **repo**
+- [ ] 3. Ознакомиться со ссылками учебного материала
+- [ ] 4. Выполнить инструкцию учебного материала
+- [ ] 5. Составить отчет и отправить ссылку личным сообщением в **Slack**
+
+## Tutorial
+
+```sh
+$ export GITHUB_USERNAME=<имя_пользователя>
+$ export GITHUB_EMAIL=<адрес_почтового_ящика>
+$ export GITHUB_TOKEN=<сгенирированный_токен>
+$ alias edit=<nano|vi|vim|subl>
+```
+
+```sh
+$ cd ${GITHUB_USERNAME}/workspace
+$ source scripts/activate
+```
+
+```sh
+$ mkdir ~/.config
+$ cat > ~/.config/hub <<EOF
+github.com:
+- user: ${GITHUB_USERNAME}
+  oauth_token: ${GITHUB_TOKEN}
+  protocol: https
+EOF
+$ git config --global hub.protocol https
+```
+
+```sh
+$ mkdir projects/lab02 && cd projects/lab02
+$ git init
+$ git config --global user.name ${GITHUB_USERNAME}
+$ git config --global user.email ${GITHUB_EMAIL}
+# check your git global settings
+$ git config -e --global
+$ git remote add origin https://github.com/${GITHUB_USERNAME}/lab02.git
+$ git pull origin master
+$ touch README.md
+$ git status
+$ git add README.md
+$ git commit -m"added README.md"
+$ git push origin master
+```
+
+Добавить на сервисе **GitHub** в репозитории **lab02** файл **.gitignore**
+со следующем содержимом:
+
+```sh
+*build*/
+*install*/
+*.swp
+.idea/
+```
+
+```sh
+$ git pull origin master
+$ git log
+```
+
+```sh
+$ mkdir sources
+$ mkdir include
+$ mkdir examples
+$ cat > sources/print.cpp <<EOF
+#include <print.hpp>
+
+void print(const std::string& text, std::ostream& out)
+{
+  out << text;
+}
+
+void print(const std::string& text, std::ofstream& out)
+{
+  out << text;
+}
+EOF
+```
+
+```sh
+$ cat > include/print.hpp <<EOF
+#include <fstream>
+#include <iostream>
+#include <string>
+
+void print(const std::string& text, std::ofstream& out);
+void print(const std::string& text, std::ostream& out = std::cout);
+EOF
+```
+
+```sh
+$ cat > examples/example1.cpp <<EOF
+#include <print.hpp>
+
+int main(int argc, char** argv)
+{
+  print("hello");
+}
+EOF
+```
+
+```sh
+$ cat > examples/example2.cpp <<EOF
+#include <print.hpp>
+
+#include <fstream>
+
+int main(int argc, char** argv)
+{
+  std::ofstream file("log.txt");
+  print(std::string("hello"), file);
+}
+EOF
+```
+
+```sh
+$ edit README.md
+```
+
+```sh
+$ git status
+$ git add .
+$ git commit -m"added sources"
+$ git push origin master
+```
+
+## Report
+
+```sh
+$ cd ~/workspace/
+$ export LAB_NUMBER=02
+$ git clone https://github.com/tp-labs/lab${LAB_NUMBER}.git tasks/lab${LAB_NUMBER}
+$ mkdir reports/lab${LAB_NUMBER}
+$ cp tasks/lab${LAB_NUMBER}/README.md reports/lab${LAB_NUMBER}/REPORT.md
+$ cd reports/lab${LAB_NUMBER}
+$ edit REPORT.md
+$ gist REPORT.md
+```
+
+## Homework
+
 ### Part I
 
 1. Создайте пустой репозиторий на сервисе github.com (или gitlab.com, или bitbucket.com).
-https://github.com/grigsha/lab02.git
 2. Выполните инструкцию по созданию первого коммита на странице репозитория, созданного на предыдещем шаге.
-git add .
-git commit -m "a"
-git remote add origin
-git push -u origin main
-3. Создайте файл `hello_world.cpp` в локальной копии репозитория (который должен был появиться на шаге 2). Реализуйте программу **Hello world** на языке C++ используя плохой стиль кода. 
-cat > Hello_world.cpp <<EOF
-#include <iostream>
-
-using namespace std;
-
-int main(){
-cout << "Hello world" << endl;
-}
-
-EOF
+3. Создайте файл `hello_world.cpp` в локальной копии репозитория (который должен был появиться на шаге 2). Реализуйте программу **Hello world** на языке C++ используя плохой стиль кода. Например, после заголовочных файлов вставьте строку `using namespace std;`.
 4. Добавьте этот файл в локальную копию репозитория.
-git add Hello-world.cpp
 5. Закоммитьте изменения с *осмысленным* сообщением.
-git commit -m "Added new cpp file"
 6. Изменитьте исходный код так, чтобы программа через стандартный поток ввода запрашивалось имя пользователя. А в стандартный поток вывода печаталось сообщение `Hello world from @name`, где `@name` имя пользователя.
-cat > Hello_world.cpp <<EOF
-#include <iostream>
-#include <string> 
-
-using namespace std;
-ы
-int main(){
-string name;
-cout << "enter name: " << endl;
-cin >> name;
-cout << "Hello world " << name << endl;
-}
-EOF
-
-7. Закоммитьте новую версию программы. Почему не надо добавлять файл повторно `git add`? Повторно писать команду git add не надо, так как файл уже был добавлен в шаге 4.
-git commit -m "Changed cpp file"
+7. Закоммитьте новую версию программы. Почему не надо добавлять файл повторно `git add`?
 8. Запуште изменения в удалёный репозиторий.
-git push origin
 9. Проверьте, что история коммитов доступна в удалёный репозитории.
-git log
-commit b1e9365b53fe982c6437862d551fc11d733143b9 (HEAD -> main, origin/main, orig
-commit b1e9365b53fe982c6437862d551fc11d733143b9 (HEAD -> main, origin/main, orig
-commit b1e9365b53fe982c6437862d551fc11d733143b9 (HEAD -> main, origin/main, orig
-commit b1e9365b53fe982c6437862d551fc11d733143b9 (HEAD -> main, origin/main, orig
-commit b1e9365b53fe982c6437862d551fc11d733143b9 (HEAD -> main, origin/main, orig
-commit b1e9365b53fe982c6437862d551fc11d733143b9 (HEAD -> main, origin/main, orig
-commit b1e9365b53fe982c6437862d551fc11d733143b9 (HEAD -> main, origin/main, orig
-commit b1e9365b53fe982c6437862d551fc11d733143b9 (HEAD -> main, origin/main, orig
-commit b1e9365b53fe982c6437862d551fc11d733143b9 (HEAD -> main, origin/main, orig
-commit b1e9365b53fe982c6437862d551fc11d733143b9 (HEAD -> main, origin/main, orig
-commit b1e9365b53fe982c6437862d551fc11d733143b9 (HEAD -> main, origin/main, orig
-in/HEAD)
-Author: grigsha <mari.aa05@mail.ru>
-Date:   Mon May 13 11:17:37 2024 +0300
-
-    Changed cpp file
-
-commit b2c785378f59598588cce5414840c02b165c78cf
-Author: grigsha <mari.aa05@mail.ru>
-Date:   Mon May 13 11:02:14 2024 +0300
-
-    Added new cpp file
-
-commit 4e4ad28c75649c222248be34b1f7933f7785d465
-Author: grigsha <mari.aa05@mail.ru>
-Date:   Mon May 13 10:55:00 2024 +0300
-
-    a
-
-commit 62bd6376804a675e472e83eb635be8ca314485a5
-Author: grigsha <144799664+grigsha@users.noreply.github.com>
-Date:   Sun May 12 03:17:51 2024 +0300
-
-    Initial commit
 
 ### Part II
 
@@ -108,3 +192,14 @@ Date:   Sun May 12 03:17:51 2024 +0300
 8. Убедитель, что в pull-request пропали конфликтны. 
 9. Вмержите pull-request `patch2 -> master`.
 
+## Links
+
+- [hub](https://hub.github.com/)
+- [GitHub](https://github.com)
+- [Bitbucket](https://bitbucket.org)
+- [Gitlab](https://about.gitlab.com)
+- [LearnGitBranching](http://learngitbranching.js.org/)
+
+```
+Copyright (c) 2015-2021 The ISC Authors
+```
